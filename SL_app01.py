@@ -77,7 +77,6 @@ st.markdown("""
     # Premier push
     git push -u origin main        
 
-
     ```    
     
     (le modèle entraîné sauvegardé au format H5 et le fichier `.py` avec le script Streamlit).
@@ -87,18 +86,27 @@ st.markdown("""
     > Dans ce cas, nous pouvons utiliser **Git Large File Storage (Git LFS)**.
     >
 
-    Pour utiliser Git LFS :
+    Pour utiliser Git LFS - commenter les .gitignore pour les fichiers data et préparer le .gitattributes:
     ```bash
     git lfs install
     git clone
+    git lfs track "*.keras"
     git lfs track "*.h5"
+    git lfs track "*.pkl"
+    git lfs track "*.csv"
+
     git add .gitattributes
     git add fichier.h5
-    git commit -m fichier.h5
+
+    #Vérifier que LFS est bien en charge
+    git lfs ls-files
+    # doit lister tes fichiers lourds
+
+    git commit -m "fichier lourds"
     git push
     ```
 
-    ## Déploiement via Colab
+    ## Déploiement via Colab ngrok - might not be suitable for uv
 
     Installer Streamlit et ngrok :
     ```python
@@ -125,6 +133,74 @@ st.markdown("""
     ```bash
     !streamlit run /content/streamlit_app.py & npx localtunnel --port 8501
     ```
+    
+    ## Déploiement streamlit cloud via uv + github
+    ```bash     
+    # 1. préparer le repo
+    # 2. vérif dépendances pyproject.toml avec la section tool.uv         
+    # 3. Générer le lockfile 
+    uv sync
+            
+    # 4. streamlit cloud et uv ? pip est par defaut sur streamlit cloud, pour uv il lui faut une config
+    # see .streamlit/config.toml et packages.txt
+    
+    # 5. et la génération du requirements.txt par uv
+    uv pip compile pyproject.toml -o requirements.txt        
+    
+    # 6. pousser sur github
+    git add pyproject.toml uv.lock requirements.txt .python-version
+    git commit -m "config : dépendances uv + requirements Streamlit"
+    git push            
+
+    sur share.streamlit.io 
+    7. Déployer sur Streamlit Cloud
+    Va sur share.streamlit.io :
+
+        Connect → connecte ton compte GitHub
+        New app
+        Renseigne :
+
+        Repository : TON_USERNAME/streamtest
+        Branch : main
+        Main file : main.py
+        # Deploy → Streamlit installe les dépendances et lance l'app
+            
+        Your app is in the oven - https://streamtest-wkre8ddner938gx4ezeils.streamlit.app/
+        
+        It rocks all 4 pages
+    
+
+    ``` 
+
+
+
+    ## D A Y  -  T O  -  D A Y  -  O P E R A T I O N
+    ```bash
+    #adding a new library -> update dependencies
+    uv add newlib
+    uv pip compile pyproject.toml -o requirements.txt
+
+    # Pousser
+    git add .
+    git commit -m "feat : nouvelle fonctionnalité"
+    git push
+    # Streamlit Cloud redéploie automatiquement !         
+
+    #Pour les modèles lourds
+    # Si model.keras est dans le repo
+    git lfs track "*.keras"
+    git lfs track "*.pkl"
+    git add .gitattributes
+    ? git add data/.*
+    git commit -m "config : Git LFS pour les modèles"
+    git push        
+
+    ```     
+    💡 Le uv.lock est important à committer même si Streamlit Cloud utilise requirements.txt — il garantit la reproductibilité sur ta machine locale. 
+            
+    Le workflow idéal : uv pour développer localement, requirements.txt généré par uv pour le déploiement Streamlit Cloud.        
+
+            
 
     Maintenant vous maîtrisez Streamlit !
     """)

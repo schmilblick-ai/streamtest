@@ -2043,6 +2043,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pyngrok"
+version = "8.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ec/7a/6f9b08044be356d228533f6a8454377e2d31dd1309adf13209906019762d/pyngrok-8.0.0.tar.gz", hash = "sha256:6e7aaf90b43086ad25508a1122423608003f712d9988319ddf7be50431028101", size = 42082, upload-time = "2026-04-01T15:43:43.333Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/53/ae/d8cb883f717627bd8e2fe2a65ab6544cd23789a63d61411c037a65246982/pyngrok-8.0.0-py3-none-any.whl", hash = "sha256:bdc34c7a0a7e9bad60e44b9dcc7661c055c0a79dc029c7100ed15669c626d5c1", size = 24467, upload-time = "2026-04-01T15:43:42.3Z" },
+]
+
+[[package]]
 name = "pyparsing"
 version = "3.3.2"
 source = { registry = "https://pypi.org/simple" }
@@ -2632,6 +2644,7 @@ dependencies = [
     { name = "matplotlib" },
     { name = "nltk" },
     { name = "plotly" },
+    { name = "pyngrok" },
     { name = "scikit-learn" },
     { name = "seaborn" },
     { name = "streamlit" },
@@ -2646,12 +2659,16 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "nltk", specifier = ">=3.9.4" },
     { name = "plotly", specifier = ">=6.6.0" },
+    { name = "pyngrok", specifier = ">=8.0.0" },
     { name = "scikit-learn", specifier = ">=1.8.0" },
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "streamlit", specifier = ">=1.55.0" },
     { name = "tensorflow", specifier = ">=2.21.0" },
     { name = "wordcloud", specifier = ">=1.9.6" },
 ]
+
+[package.metadata.requires-dev]
+dev = []
 
 [[package]]
 name = "streamlit"
