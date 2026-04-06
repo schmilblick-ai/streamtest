@@ -1,0 +1,22 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.sl
+
+# Modèles lourds
+*.h5
+*.keras
+*.pkl
+*.csv
+
+# IDE
+*.vscode
+!.vscode/settings.json
+.env
