@@ -11,7 +11,7 @@ st.set_page_config(
 
 load_css()
 
-st.title("Word2Vec Explorer — Avis cinéma")
+st.title("Word2Vec Explorer - Avis cinéma")
 st.caption("Exploration des embeddings entraînés sur une base d'avis de films")
 
 
@@ -19,10 +19,10 @@ st.caption("Exploration des embeddings entraînés sur une base d'avis de films"
 st.markdown("""
 Navigue dans le menu à gauche :
 
-- **Mots proches** — wordcloud des voisins sémantiques
-- **Analogies** — A − B + C = ?
-- **Clustering** — visualisation TSNE des embeddings
-- **Outliers** — quel mot n'appartient pas au groupe ?
+- **Mots proches** - wordcloud des voisins sémantiques
+- **Analogies** - A − B + C = ?
+- **Clustering** - visualisation TSNE des embeddings
+- **Outliers** - quel mot n'appartient pas au groupe ?
 """)
 
 st.markdown("""
@@ -40,6 +40,45 @@ st.markdown("""
     (o) Suivre les étapes du notebook précédent pour héberger l'application Streamlit à partir de GitHub.
     
     Créer notamment un repository GitHub et y déposer les fichiers nécessaires à l'application Streamlit
+    ```bash        
+    sur [github](https://github.com/schmilblick-ai/)  
+    Ne rien cocher (no README, no .gitignore) 
+    
+    # Ajouter tous les fichiers
+    git add .
+
+    # Premier commit
+    git commit -m "init : application Word2Vec Streamlit"    
+
+    # Renommer la branche principale
+    git branch -M main
+
+    # Prepare credentials        
+    ssh-keygen -t ed25519 -C "ton@email.com"
+    #do not overide, if the key exists, take that key
+    # Copier la clé publique et ma coller dans github si pas fait (→ Settings → SSH and GPG keys → New SSH key)
+    cat ~/.ssh/id_ed25519.pub        
+            
+    # Relier le repo local au repo GitHub
+    # NON PAS https - préféré ssh # git remote add origin https://github.com/TON_USERNAME/streamtest.git
+    # En changeant l'URL pour SSH and check
+    git remote set-url origin git@github.com:TON_USERNAME/streamtest.git
+    git remote -v        
+
+    #  V E R I F I C A T I O N
+    git remote -v
+    # origin  https://github.com/TON_USERNAME/streamtest.git (fetch)
+    # origin  https://github.com/TON_USERNAME/streamtest.git (push)
+
+    git status
+    # On branch main - nothing to commit        
+
+                                
+    # Premier push
+    git push -u origin main        
+
+
+    ```    
     
     (le modèle entraîné sauvegardé au format H5 et le fichier `.py` avec le script Streamlit).
 
@@ -159,7 +198,7 @@ if False:
         
         Une fois que le code est terminé, executer le code suivant dans une nouvelle cellule Google Colab pour déployer l'application Streamlit.
         
-        !streamlit run /content/streamlit_app.py & npx localtunnel — port 8501
+        !streamlit run /content/streamlit_app.py & npx localtunnel - port 8501
 
         
         Maintenant vous maitrisez Streamlit et ses bonnes pratiques pour tout type de projet et pour tout environnement de travail !

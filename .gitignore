@@ -10,11 +10,11 @@ wheels/
 .venv
 .sl
 
-# Modèles lourds
-*.h5
-*.keras
-*.pkl
-*.csv
+# Modèles lourds on commente si on passe en git LFS
+# *.h5
+# *.keras
+# *.pkl
+# *.csv
 
 # IDE
 *.vscode
