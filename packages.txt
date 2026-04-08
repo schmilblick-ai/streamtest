@@ -1,2 +1,2 @@
 # packages.txt
-libgomp1    # pour LightGBM/XGBoost si utilisé
+# libgomp1    # pour LightGBM/XGBoost si utilisé
