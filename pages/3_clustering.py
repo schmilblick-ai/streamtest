@@ -9,7 +9,7 @@ load_css()
 weights, idx_to_word, tokenizer = load_embeddings()
 
 st.title("Visualisation TSNE des embeddings")
-
+st.text("TSNE is t-distributed Stochastic Neighbor Embedding")
 n_words = st.slider("Nombre de mots à visualiser", 50, 500, 200)
 
 with st.spinner("Calcul TSNE en cours..."):
