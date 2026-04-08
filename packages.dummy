@@ -1,0 +1,4 @@
+# check documentation https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/app-dependencies
+# if you need some packages.txt to specify server side package preinstallation, this is the way to go, but comments are not allowed
+# packages.txt
+# libgomp1    # pour LightGBM/XGBoost si utilisé
