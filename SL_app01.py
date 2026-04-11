@@ -1,20 +1,64 @@
 import streamlit as st
 from backend.utils import load_css
 
-       
+
+st.header('Basketball')
+
+# Sidebar navigation
+st.sidebar.page_link('SL_app01.py', label='Home')
+st.sidebar.page_link('pages/1_mot_proches.py', label='Basketball')
+
 st.set_page_config(
     page_title="Word2Vec Explorer",
-    page_icon="🎬",
+    page_icon="😎", #"🎬",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed",
+    menu_items={"Get Help":"mailto:pages@truc.py"}
 )
 
 load_css()
 
 st.title("Word2Vec Explorer - Avis cinéma")
 st.caption("Exploration des embeddings entraînés sur une base d'avis de films")
+#print("where are we")
+##############################################################################################
+# Create a sidebar selection
+##############################################################################################
 
+selection = st.sidebar.radio(
+    "Test page hiding",
+    ["Show all pages", "Hide pages 1 and 2", "Hide Other apps Section"],
+)
 
+# Define a list of pages
+pages = ["1_mot_proches", "2_analogies", "Other apps"]
+
+# Define a function to hide selected pages
+def hide_pages(pages_to_hide):
+    for page in pages_to_hide:
+        print(page)
+        st.sidebar.markdown(f"## {page}")
+        st.sidebar.markdown("This page is hidden !")
+print(selection)
+# Main app content
+if selection == "Show all pages":
+    # Display all pages in the sidebar
+    for page in pages:
+        st.sidebar.markdown(f"## {page}")
+        st.sidebar.markdown("This is a sample page ?")
+elif selection == "Hide pages 1 and 2":
+    # Hide pages 1 and 2
+    pages_to_hide = ["1_mot_proches", "2_analogies"]
+    hide_pages(pages_to_hide)
+elif selection == "Hide Other apps Section":
+    # Hide the "Other apps" section
+    pages_to_hide = ["Other apps"]
+    hide_pages(pages_to_hide)
+
+# Add some content to the main area of the app
+st.title("Main Content")
+st.selectbox("test_select", options=["1", "2", "3"])
+##############################################################################################
 
 st.markdown("""
 Navigue dans le menu à gauche :
@@ -203,6 +247,12 @@ st.markdown("""
             
 
     Maintenant vous maîtrisez Streamlit !
+
+
+    et le debugging ?        
+    Ah, c'est ici https://ploomber.io/blog/streamlit-debugging/
+
+
     """)
 
 if False:
