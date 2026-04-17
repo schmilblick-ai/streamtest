@@ -1,5 +1,8 @@
 import streamlit as st
 from backend.utils import load_css
+import psutil
+import os
+
 
 
 #st.header('Basketball')
@@ -88,3 +91,16 @@ if False:
     st.write(f"where are we {pg._page.parent},{pg._page} {outliers} {dir(outliers)} {outliers._url_path}")
     ##############################################################################################
 
+def get_memory_usage():
+    process = psutil.Process(os.getpid())
+    mem_info = process.memory_info()
+    return mem_info.rss / (1024 * 1024)  # Conversion en MB
+
+# Affichage dans la sidebar pour monitoring constant
+st.sidebar.title("🚀 Observabilité")
+mem_usage = get_memory_usage()
+st.sidebar.metric("RAM Utilisée", f"{mem_usage:.2f} MB")
+
+# Alerte visuelle si on approche de la limite (souvent 1GB sur le tier gratuit)
+if mem_usage > 800:
+    st.sidebar.warning("⚠️ Attention : Saturation RAM proche !")
