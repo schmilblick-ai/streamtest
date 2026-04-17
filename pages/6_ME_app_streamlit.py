@@ -7,6 +7,7 @@ from wordcloud import WordCloud, STOPWORDS
 import plotly.express as px
 import matplotlib.pyplot as plt
 import spacy
+import fr_core_news_sm
 
 
 # Configuration de la page
@@ -31,9 +32,9 @@ def load_data():
     return df
 
 @st.cache_resource
-def load_nlp():
-    # On charge le modèle une seule fois
-    return spacy.load("fr_core_news_sm")
+def get_nlp():
+    # Charge le modèle via le package directement
+    return fr_core_news_sm.load()
 
 nlp = load_nlp()
 

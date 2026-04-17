@@ -112,6 +112,8 @@ fonttools==4.62.1
     # via matplotlib
 fqdn==1.5.1
     # via jsonschema
+fr-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0-py3-none-any.whl
+    # via streamlearn (pyproject.toml)
 fsspec==2026.3.0
     # via
     #   huggingface-hub
