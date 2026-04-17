@@ -19,6 +19,9 @@ from collections import Counter
 from backend.utils import sync_project_files
 import os
 from pathlib import Path
+from PIL import Image
+# On augmente la limite (ou on la désactive, à vos risques et périls)
+Image.MAX_IMAGE_PIXELS = None
 
 ### fonctions
 
