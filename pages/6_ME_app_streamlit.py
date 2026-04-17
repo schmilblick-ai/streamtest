@@ -1,16 +1,13 @@
 import streamlit as st
 import pandas as pd
-#import joblib
+import joblib
 from bertopic import BERTopic
 import plotly.express as px
 from wordcloud import WordCloud, STOPWORDS
+import plotly.express as px
 import matplotlib.pyplot as plt
 import spacy
 
-
-from SL_app01 import Marvin_header
-
-Marvin_header()
 
 # Configuration de la page
 st.set_page_config(page_title="Catégorisation des Avis TrustPilot", layout="wide")
@@ -22,15 +19,15 @@ def load_models():
     Charge les deux versions du modèle BERTopic.
     Assure-toi que ces dossiers existent dans ton répertoire /DS/
     """
-    model_initial = BERTopic.load("data/dataMV/modele_bertopic_oscaro")
-    model_reduit = BERTopic.load("data/dataMV/modele_bertopic_9themes")
+    model_initial = BERTopic.load("modele_bertopic_oscaro")
+    model_reduit = BERTopic.load("modele_bertopic_9themes")
     return model_initial, model_reduit
 
 
 @st.cache_data
 def load_data():
     # Charge ton CSV final labellisé
-    df = pd.read_csv('data/dataMV/avis_oscaro_9_familles.csv', sep=';')
+    df = pd.read_csv('avis_oscaro_9_familles.csv', sep=';')
     return df
 
 @st.cache_resource
@@ -71,7 +68,7 @@ with tab1:
     # 1. Chargement du fichier original (pense à bien avoir 'avis_40k.csv' dans ton dossier)
     @st.cache_data
     def load_raw_data():
-        return pd.read_csv('data/dataMV/avis_40k.csv', sep=';') # Ajuste le sep si besoin
+        return pd.read_csv('avis_40k.csv', sep=';') # Ajuste le sep si besoin
 
     df_raw = load_raw_data()
 
@@ -179,7 +176,7 @@ with tab2:
             ax2.axis("off")
             st.pyplot(fig2)
             
-        st.info(f"💡 Interprétation : Le nuage NLTK (à droite) élimine les bruits comme 'avis' ou 'plus' pour se concentrer sur les termes métier.")  # noqa: F541
+        st.info(f"💡 Interprétation : Le nuage NLTK (à droite) élimine les bruits comme 'avis' ou 'plus' pour se concentrer sur les termes métier.")
 
     else:
         st.warning(f"Aucun avis trouvé pour la note <= {note_max}")

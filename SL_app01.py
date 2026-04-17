@@ -76,7 +76,7 @@ if True:
 
 
     pg = st.navigation({"main":[main]
-        ,"🎬Cinéma": [mot_proches, analogie, clustering, outliers]
+        #"🎬Cinéma": [mot_proches, analogie, clustering, outliers]
         ,"⚙️System": [osexplo]
         ,"🧑‍✈️TrustP": [Marvin, Lionel, Robin, Whole]
         },)
