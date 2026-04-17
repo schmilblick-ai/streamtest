@@ -2,7 +2,7 @@ import streamlit as st
 from backend.utils import load_css
 import psutil
 import os
-
+import sys
 
 
 #st.header('Basketball')
@@ -60,6 +60,8 @@ def Bestof_collection_header():
     st.title("Overall team proposal and consolidation")
     st.caption("Review of assets provided by MLE Marvin on the BertTopic modelling")   
 
+with st.sidebar:
+    st.title("⚙️ Trust Pilot Explorer")
 
 if True:
 
@@ -68,6 +70,7 @@ if True:
     clustering  = st.Page("pages/3_clustering.py"     , title="clustering", icon=":material/notification_important:")
     outliers    = st.Page("pages/4_outliers.py"       , title="outliers", icon=":material/search:")
     osexplo     = st.Page("pages/5_osexplo.py"        , title="os Exploration", icon=":material/history:",)
+    
     Marvin      = st.Page("pages/6_MV_BertTopic.py"   , title="Marvin", icon=":material/history:",)
     Lionel      = st.Page("pages/7_LG_BertTopic.py"   , title="Lionel", icon=":material/history:",)
     #Robin      = st.Page("pages/8_RM_multiclassif.py", title="Robin", icon=":material/history:",)
@@ -104,3 +107,19 @@ st.sidebar.metric("RAM Utilisée", f"{mem_usage:.2f} MB")
 # Alerte visuelle si on approche de la limite (souvent 1GB sur le tier gratuit)
 if mem_usage > 800:
     st.sidebar.warning("⚠️ Attention : Saturation RAM proche !")
+
+with st.sidebar:
+    st.divider()
+    st.title("⚙️ Environnement")
+    
+    # Version de Python
+    st.metric("Python", f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")
+    
+    # Versions des bibliothèques critiques
+    st.write("**Dépendances :**")
+    st.text(f"umap-learn: {umap.__version__}")
+    st.text(f"numba:      {numba.__version__}")
+    st.text(f"joblib:     {joblib.__version__}")
+    st.text(f"scikit-learn: {sklearn.__version__}")
+    
+    st.divider()
