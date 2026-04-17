@@ -1,14 +1,14 @@
 import streamlit as st
 import pandas as pd
-import joblib
+#import joblib
 from bertopic import BERTopic
 import plotly.express as px
 from wordcloud import WordCloud, STOPWORDS
-import plotly.express as px
+#import plotly.express as px
 import matplotlib.pyplot as plt
-import spacy
+#import spacy
 import fr_core_news_sm
-
+# N O T   I N   U S E
 
 # Configuration de la page
 st.set_page_config(page_title="Catégorisation des Avis TrustPilot", layout="wide")
@@ -32,7 +32,7 @@ def load_data():
     return df
 
 @st.cache_resource
-def get_nlp():
+def load_nlp():
     # Charge le modèle via le package directement
     return fr_core_news_sm.load()
 
@@ -177,7 +177,7 @@ with tab2:
             ax2.axis("off")
             st.pyplot(fig2)
             
-        st.info(f"💡 Interprétation : Le nuage NLTK (à droite) élimine les bruits comme 'avis' ou 'plus' pour se concentrer sur les termes métier.")
+        st.info("💡 Interprétation : Le nuage NLTK (à droite) élimine les bruits comme 'avis' ou 'plus' pour se concentrer sur les termes métier.")
 
     else:
         st.warning(f"Aucun avis trouvé pour la note <= {note_max}")

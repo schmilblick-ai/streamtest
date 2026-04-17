@@ -7,19 +7,23 @@ import numpy as np
 import plotly.express as px
 from plotly.subplots import make_subplots
 #import plotly.graph_objects as go
-import torch
+#import torch
 from transformers import AutoModel #, AutoTokenizer
-from peft import PeftModel
+#from peft import PeftModel
 from sentence_transformers import SentenceTransformer, models
-from umap import UMAP
+#from umap import UMAP
 import joblib
 #from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.neighbors import NearestNeighbors
 from collections import Counter
 from backend.utils import sync_project_files
 import os
-from pathlib import Path
+#from pathlib import Path
 from PIL import Image
+
+#from sklearn.cluster import HBDSCAN
+import umap
+
 # On augmente la limite (ou on la désactive, à vos risques et périls)
 Image.MAX_IMAGE_PIXELS = None
 
@@ -85,9 +89,28 @@ def assign_cluster_from_knn(
     
 main_data = "data/data_final_streamlit"  
 
-@st.cache_resource
-def load_models(pipeline):
+@st.cache_data
+def reducing_head(pipeline):
 
+  embeddings_paraph,_ = load_embs(pipeline)
+  
+  reducer = umap.UMAP(
+    n_neighbors=5
+    , min_dist=0.0
+    , metric='cosine'
+    , n_components=5                       
+    , random_state=42)
+  
+  reducer.fit_transform(embeddings_paraph)
+  reducer.embedding_  = reducer.embedding_.astype(np.float32)
+  reducer._raw_data = reducer._raw_data.astype(np.float32)
+  reducer.graph_ = None
+  return embeddings_paraph, reducer  
+
+#@st.cache_resource
+@st.cache_data
+def load_models(pipeline):
+  
   if pipeline in ['paraphrase_UMAP_HDBSCAN', 'paraphrase_UMAP_KMEANS'] :
     ### loading models
     model_paraphrase = SentenceTransformer('sentence-transformers/paraphrase-multilingual-mpnet-base-v2')
@@ -102,19 +125,18 @@ def load_models(pipeline):
       pooling_mode_mean_tokens=True
     )
     model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
-  ### loading reducer 
+
+  ### loading commonly the reducer 
+  _ , pipeline_reducer = reducing_head(pipeline)
+
   if pipeline == 'paraphrase_UMAP_HDBSCAN' :
-    reducer_paraphrase_hdbscan = joblib.load(Path(f"{main_data}/umap_paraphrase_hdbscan.pkl"))
-    return model_paraphrase, reducer_paraphrase_hdbscan
+    return model_paraphrase, pipeline_reducer
   elif pipeline == 'paraphrase_UMAP_KMEANS' :
-    reducer_paraphrase_kmeans = joblib.load(Path(f"{main_data}/umap_paraphrase_kmeans.pkl"))
-    return model_paraphrase, reducer_paraphrase_kmeans
+    return model_paraphrase, pipeline_reducer
   elif pipeline == 'paraphrase_LoRA_UMAP_HDBSCAN' :
-    reducer_paraphrase_lora_hdbscan = joblib.load(Path(f"{main_data}/umap_paraphrase_lora_hdbscan.pkl"))
-    return model, reducer_paraphrase_lora_hdbscan
+    return model, pipeline_reducer
   elif pipeline == 'paraphrase_LoRA_UMAP_KMEANS' :
-    reducer_paraphrase_lora_kmeans = joblib.load(Path(f"{main_data}/umap_paraphrase_lora_kmeans.pkl"))
-    return model, reducer_paraphrase_lora_kmeans
+    return model, pipeline_reducer
     
 @st.cache_data
 def load_embs(pipeline):
