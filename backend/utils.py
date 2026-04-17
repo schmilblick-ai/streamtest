@@ -82,7 +82,19 @@ def sync_project_files(subproject_data,repo_id = "schmilblick-ai/streamlearn_dat
     repo_id = "Robin-la-Lune/streamTest"  # Remplacez par votre repo HF
     """
     
+    if repo_id == "schmilblick-ai/streamlearn_data":
+        # Récupération sécurisée du token dans les secrets
+        try:
+            hf_token = st.secrets["hf"]["HF_TOK"]
+        except KeyError:
+            st.error("Le token Hugging Face est introuvable dans les secrets.")
+            return None
+    else:
+        #avoir plus tard gestion plus précise des tokens pour différents repos si besoin        
+        hf_token="" #sera récupéré de manière sécurisée dans les secrets.toml, pas en dur
+
     
+
     # snapshot_download télécharge tout le dossier spécifié
     # local_dir : où le mettre sur le serveur Streamlit
     # allow_patterns : on ne prend que ce qui nous intéresse
@@ -90,7 +102,8 @@ def sync_project_files(subproject_data,repo_id = "schmilblick-ai/streamlearn_dat
         repo_id=repo_id,
         local_dir="data",                        # Racine locale
         allow_patterns=[f"{subproject_data}/*"], # Récupère tout le sous-dossier projet
-        local_dir_use_symlinks=False
+        local_dir_use_symlinks=False,
+        token=hf_token # ajout du token pour l'authentification
     )
     base = os.path.join("data", subproject_data) 
     st.write(f"Base path for {subproject_data}: {base} vs {local_path}") 

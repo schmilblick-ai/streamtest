@@ -22,4 +22,5 @@ data/
 *.vscode
 !.vscode/settings.json
 .env
+.streamlit/secrets.toml
 
