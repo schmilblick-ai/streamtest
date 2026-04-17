@@ -7,16 +7,16 @@ from gensim.models import Word2Vec
 
 @st.cache_resource
 def load_w2v():
-    return Word2Vec.load('model.w2v')
+    return Word2Vec.load('data/dataMovies/model.w2v')
 
 @st.cache_resource
 def load_model(mdlName="word2vec.keras"):
-    mdlPath=Path(f"data/{mdlName}")
+    mdlPath=Path(f"data/dataMovies/{mdlName}")
     return tf.keras.models.load_model(mdlPath)
 
 @st.cache_resource
 def load_df(dfName="MovieReview_gld.csv"):
-    return pd.read_csv(Path(f"data/{dfName}"))
+    return pd.read_csv(Path(f"data/dataMovies/{dfName}"))
 
 @st.cache_resource
 def load_tokenizer(tknizer='tokenizer.pkl', df=False):
@@ -26,7 +26,7 @@ def load_tokenizer(tknizer='tokenizer.pkl', df=False):
         tokenizer.fit_on_texts(df.review)
     if tknizer:
         #préférer le pickel.load pour récupérer le tokenizer buildé pendant l'inférence
-        with open(Path(f'data/{tknizer}'), 'rb') as f:
+        with open(Path(f'data/dataMovies/{tknizer}'), 'rb') as f:
             return pickle.load(f)
 
 @st.cache_resource

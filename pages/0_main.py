@@ -1,4 +1,5 @@
 import streamlit as st
+from backend.utils import sync_project_files
 
 st.markdown("""
 Navigue dans le menu à gauche :
@@ -191,9 +192,37 @@ st.markdown("""
 
     et le debugging ?        
     Ah, c'est ici https://ploomber.io/blog/streamlit-debugging/
-
+            
+    Et ca ne marche pas 😡😭😤 !
 
     """)
+
+if True:
+    import os
+
+    # Création automatique des dossiers au lancement ici juste data qui n'est plus dans github
+    os.makedirs("data", exist_ok=True)
+
+    
+    
+    # R E C U P  H F  Presque comme des libnames avec une synchro
+    # Voilà avec une boucle c'est sympa !
+    for Proj in ["dataMV","dataLG"]:
+        if not os.path.exists(f"data/{Proj}"):
+
+            st.success("Données déjà présentes localement, pas besoin de les recharger depuis Hugging Face !")
+            with st.spinner(f"Récupération des ressources pour {Proj} depuis Hugging Face... [{Proj}_Path]"):
+                #"Variable globale {Proj}_Path créée avec le chemin local synchronisé"
+                globals()[f"{Proj}_Path"] = sync_project_files(Proj) 
+                st.success(f"ressources pour {Proj} chargés !")
+        else:
+            st.success(f"Données pour {Proj} déjà présentes localement, pas besoin de les recharger depuis Hugging Face !")
+            globals()[f"{Proj}_Path"] = f"data/{Proj}"    
+
+    # OPTIM on pourra mettre chaque load dans la page qui en a besoin, mais pour l'instant c'est plus simple de tout faire d'un coup
+    # pour voir, et ça évite les problèmes de chargement à la volée dans les pages
+
+
 
 if False:
     st.markdown("""

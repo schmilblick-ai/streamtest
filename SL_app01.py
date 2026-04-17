@@ -67,7 +67,8 @@ if True:
     osexplo     = st.Page("pages/5_osexplo.py"        , title="os Exploration", icon=":material/history:",)
     Marvin      = st.Page("pages/6_MV_BertTopic.py"   , title="Marvin", icon=":material/history:",)
     Lionel      = st.Page("pages/7_LG_BertTopic.py"   , title="Lionel", icon=":material/history:",)
-    Robin       = st.Page("pages/8_RM_multiclassif.py", title="Robin", icon=":material/history:",)
+    #Robin      = st.Page("pages/8_RM_multiclassif.py", title="Robin", icon=":material/history:",)
+    Robin       = st.Page("pages/8_RM_clustering.py"  , title="Robin", icon=":material/history:",)
     Whole       = st.Page("pages/9_wholeClassif.py"   , title="BestOf", icon=":material/history:",)
 
 
@@ -77,57 +78,13 @@ if True:
         ,"🧑‍✈️TrustP": [Marvin, Lionel, Robin, Whole]
         },)
     
+    main_header()
     pg.run()
 
-    main_header()
+    
 
 if False:
     st.write(f"where are we {dir(pg._page)} {pg._page}")
     st.write(f"where are we {pg._page.parent},{pg._page} {outliers} {dir(outliers)} {outliers._url_path}")
     ##############################################################################################
 
-if True:
-    from huggingface_hub import snapshot_download
-    import os
-
-    @st.cache_data
-    def sync_project_files(subproject_data):
-        """
-        Télécharge récursivement le dossier du projet depuis HF.
-        Se comporte comme un rsync sélectif.
-        """
-        repo_id = "schmilblick-ai/streamlearn_data"  # Remplacez par votre repo HF
-        
-        # snapshot_download télécharge tout le dossier spécifié
-        # local_dir : où le mettre sur le serveur Streamlit
-        # allow_patterns : on ne prend que ce qui nous intéresse
-        local_path = snapshot_download( 
-            repo_id=repo_id,
-            local_dir="data",                        # Racine locale
-            allow_patterns=[f"{subproject_data}/*"], # Récupère tout le sous-dossier projet
-            local_dir_use_symlinks=False
-        )
-
-        if False: #pas de besoin
-            # On construit le dictionnaire de chemins pour la phase suivante
-            # (Adapté à votre arborescence réelle sur HF)
-            base = os.path.join("data", subproject_data)
-            paths = {
-                "xml": os.path.join(base, "openvino_model.xml"),
-                "bin": os.path.join(base, "openvino_model.bin"),
-                "embeddings": os.path.join(base, "embeddings.npy")
-            }
-            st.success(paths)
-
-        return local_path
-    
-    # R E C U P  H F  Presque comme des libnames avec une synchro
-    # Voilà avec une boucle c'est sympa !
-    for Proj in ["dataMV","dataLG"]:
-        with st.spinner(f"Récupération des ressources pour {Proj} depuis Hugging Face... [{Proj}_Path]"):
-            #"Variable globale {Proj}_Path créée avec le chemin local synchronisé"
-            globals()[f"{Proj}_Path"] = sync_project_files(Proj) 
-        st.success(f"ressources pour {Proj} chargés !")
-
-    # OPTIM on pourra mettre chaque load dans la page qui en a besoin, mais pour l'instant c'est plus simple de tout faire d'un coup
-    # pour voir, et ça évite les problèmes de chargement à la volée dans les pages

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 import umap
+from backend.utils import markdown_table_to_df #, clean_markdown, clean_markdown0
 
 #caching INPUT DATA
 @st.cache_data
@@ -25,11 +26,22 @@ def load_df40_phrases_comments():
 
   return df40_phrases, df40_comments
 
+#on ne peut mettre embeddings en param car c'est non hashable, 
+# mais on peut mettre la fonction de chargement des embeddings en cache et l'appeler dans la fonction qui fait le calcul
+# seul problème si on reuse la même fonctin plusieurs fois ?
 
+MODELS = {
+    "df40_comments_emb_GPU": {"repo": "data/dataLG/df40_comments_embeddings_GPU.npy", "dim": 384 },
+    "df40_comments_emb_CPU": {"repo": "data/dataLG/df40_comments_embeddings_CPU.npy", "dim": 384},
+    "df40_phrases_emb_CPU": {"repo": "data/dataLG/df40_phrases_embeddings_CPU.npy", "dim": 384},
+    # ajouter ici...
+}
 
-@st.cache_data
-def compute_tsne(embeddings):
+@st.cache_data(show_spinner="Calcul t-SNE en cours...")
+def compute_tsne(model_id='df40_comments_emb_GPU'):
   #warning tsne is very slow so two components directly - that's make is very limited
+  #en passant le model_id qui est hashable, on peut faire du caching même si les embeddings eux-mêmes ne le sont pas  
+  embeddings = globals().get(model_id)
   tsne = TSNE(n_components=2, random_state=42)
   return tsne.fit_transform(embeddings)
 
@@ -40,7 +52,33 @@ def compute_pca(embeddings):
 
 
 
+@st.cache_data
+def load_embeddings(model_id='sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2'): 
 
+  #reprise sur panne des embeddings des phrases 
+  #loading des embeddings syndiqués de ce streamlit uniquement
+  specific="data/dataLG/df40_phrases_embeddings_CPU.npy"
+  if not (Path(specific).exists()):
+      st.warning("Embeddings des phrases reviews non trouvés(taille de transfert trop importante, recréation en local)")
+      st.warning("Veuillez patienter, encodage en cours... (cela peut prendre plusieurs minutes (~ 12mn))")
+      df40_phrases, _ = load_df40_phrases_comments()
+
+      #phrases_embeddings = encode_batch(phrases_list, model_GPU_complet)
+      those_embeddings = modele_id_encode_batch(model_id,df40_phrases['Phrase'].tolist())
+      np.save(Path(specific), those_embeddings)
+      st.success(f"🤏Encodage {specific} terminé et sauvegardé !")
+  else:
+      st.success(f"👍Encodage {specific} déjà existant !")
+
+  return (np.load(Path("data/dataLG/df40_comments_embeddings_GPU.npy"))
+    , np.load(Path("data/dataLG/df40_comments_embeddings_CPU.npy"))
+    , np.load(Path("data/dataLG/df40_phrases_embeddings_CPU.npy"))
+    )
+
+# on charge les embeddings syndiqués de ce streamlit uniquement, 
+# pour éviter les problèmes de transfert de gros fichiers et pour permettre une mise à jour locale si besoin
+# la première fois peut être longue pour les phrases
+df40_comments_emb_GPU, df40_comments_emb_CPU, df40_phrases_emb_CPU = load_embeddings()
 
 
 
@@ -54,7 +92,7 @@ tab1, tab2, tab3 = st.tabs(["☁️ TSNE reduc", "📈 Basic dim reduction", "�
 
 with tab1:
     
-    embeddings_2d = compute_tsne(df40_comments_emb_GPU)
+    embeddings_2d = compute_tsne()
 
     st.header("☁️ TSNE reduc : basic visualisation of embeddings with dimension reduction - via TSNE or PCA")
     st.markdown(""" 
@@ -73,11 +111,12 @@ with tab1:
     st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("comparaison TSNE et une Principal Component Analysis")
-    st.markdown("""Rappel:\n
+
+    raw_text="""Rappel:\n
         Comparaison
         | TYPE                     | PCA                                      | t-SNE                      | 
         | ------------------------ | ---------------------------------------- | -------------------------  | 
-        | ***Type***               | linéaire	                                | non-linéaire               | 
+        | ***Type***               | linéaire                                 | non-linéaire               | 
         | ***Objectif***           | variance maximale                        | voisinage local            | 
         | ***Vitesse***            | ⚡ très rapide                           | 🐢 lent sur gros datasets | 
         | ***Reproductible***      | ✅ toujours                              | ⚠️ dépend du random_state | 
@@ -87,7 +126,12 @@ with tab1:
         | ***Interprétable***      | ✅ axes = combinaisons de features       | ❌ axes sans sens         | 
         | ***Nouveaux points***    | ✅ transform() direct                    | ❌ doit tout recalculer   | 
 
-    """)
+    """
+
+    df = markdown_table_to_df(raw_text)
+    st.dataframe(df, use_container_width=False)
+    #st.write( clean_markdown(raw_text))
+    #st.markdown(clean_markdown(raw_text))
     
     st.subheader("PCA : Principal Component Analysis")
 
@@ -210,7 +254,7 @@ with tab2:
       emb_umap  = reducer.fit_transform(embeddings)
       return emb_umap
     
-    emb_umap  = compute_umap(df40_comments_emb_GPU)
+    emb_umap  = compute_umap(df40_comments_emb_CPU)
 
     # Ce qui compte → ce qu'on projetee sur la carte - pas les axes eux-mêmes
     notes = df40_comments.note
@@ -494,34 +538,6 @@ with tab3:
       return sentence_embeddings
 
 
-    @st.cache_data
-    def load_embeddings(model_id='sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2'): 
-
-      #reprise sur panne des embeddings des phrases 
-      #loading des embeddings syndiqués de ce streamlit uniquement
-      specific="data/dataLG/df40_phrases_embeddings_CPU.npy"
-      if not (Path(specific).exists()):
-          st.warning("Embeddings des phrases reviews non trouvés(taille de transfert trop importante, recréation en local)")
-          st.warning("Veuillez patienter, encodage en cours... (cela peut prendre plusieurs minutes (~ 12mn))")
-          df40_phrases, _ = load_df40_phrases_comments()
-
-          #phrases_embeddings = encode_batch(phrases_list, model_GPU_complet)
-          those_embeddings = modele_id_encode_batch(model_id,df40_phrases['Phrase'].tolist())
-          np.save(Path(specific), those_embeddings)
-          st.success(f"🤏Encodage {specific} terminé et sauvegardé !")
-      else:
-         st.success(f"👍Encodage {specific} déjà existant !")
-
-      return (np.load(Path("data/dataLG/df40_comments_embeddings_GPU.npy"))
-        , np.load(Path("data/dataLG/df40_comments_embeddings_CPU.npy"))
-        , np.load(Path("data/dataLG/df40_phrases_embeddings_CPU.npy"))
-        )
-    
-    # on charge les embeddings syndiqués de ce streamlit uniquement, 
-    # pour éviter les problèmes de transfert de gros fichiers et pour permettre une mise à jour locale si besoin
-    # la première fois peut être longue pour les phrases
-    df40_comments_emb_GPU,df40_comments_emb_CPU, df40_phrases_emb_CPU = load_embeddings()
-
     def PlotCompareEmbeding(emb0,lab0,emb1,lab1,Title="Sample Embeddings"):
         from sklearn.metrics.pairwise import cosine_similarity
 
@@ -547,7 +563,7 @@ with tab3:
     #AnchorsEmbeddings = encode_batch(AnchorsLst, model_GPU_complet)
 
     model_id='sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2'
-    AnchorsEmbeddings = modele_id_encode_batch(AnchorsLst, model_id)
+    AnchorsEmbeddings = modele_id_encode_batch(model_id,AnchorsLst)
 
     # c'est la fonction EmbeddAnchors qu'on met en cache
     #AnchorsEmbeddings=EmbeddAnchors(df40_comments_emb_GPU,AnchorsLst)
