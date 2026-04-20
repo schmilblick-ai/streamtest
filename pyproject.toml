@@ -23,7 +23,7 @@ dependencies = [
     "optimum-intel>=1.27.0",
     "spacy>=3.8.11",
     # Syntaxe pour inclure le modèle directement
-    "fr-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0-py3-none-any.whl",                       
+    "fr-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/fr_core_news_sm-3.8.0/fr_core_news_sm-3.8.0-py3-none-any.whl",
     "umap-learn>=0.5.11",
     "hdbscan>=0.8.41",
     "langdetect>=1.0.9",
@@ -31,6 +31,8 @@ dependencies = [
     "tf-keras>=2.21.0",
     "huggingface-hub>=0.36.2",
     "peft>=0.19.1",
+    "pympler>=1.1",
+    "dill>=0.4.1",
 ]
 
 [tool.uv]

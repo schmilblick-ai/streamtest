@@ -1,5 +1,8 @@
 import streamlit as st
+from SL_app01 import main_header
 from backend.utils import sync_project_files
+
+main_header()
 
 st.markdown("""
 Navigue dans le menu à gauche :
@@ -190,10 +193,7 @@ st.markdown("""
     Maintenant vous maîtrisez Streamlit !
 
 
-    et le debugging ?        
-    Ah, c'est ici https://ploomber.io/blog/streamlit-debugging/
-            
-    Et ca ne marche pas 😡😭😤 !
+    Hep, et le debugging ? Aaah, c'est ici https://ploomber.io/blog/streamlit-debugging/  ... hélas ca ne marche pas 😡😭😤 !
 
     """)
 
@@ -301,4 +301,3 @@ if False:
         </pre>
         """, unsafe_allow_html=True)
     
- 

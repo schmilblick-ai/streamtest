@@ -102,8 +102,8 @@ def reducing_head(pipeline):
     , random_state=42)
   
   reducer.fit_transform(embeddings_paraph)
-  reducer.embedding_  = reducer.embedding_.astype(np.float32)
-  reducer._raw_data = reducer._raw_data.astype(np.float32)
+  reducer.embedding_  = reducer.embedding_.astype(np.float16)
+  reducer._raw_data = reducer._raw_data.astype(np.float16)
   reducer.graph_ = None
   return embeddings_paraph, reducer  
 
